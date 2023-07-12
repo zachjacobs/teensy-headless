@@ -1,8 +1,9 @@
 # The name of your project (used to name the compiled .hex file)
 TARGET = $(notdir $(CURDIR))
 
-# The teensy version to use, 30, 31, 35, 36, or LC
-TEENSY = 36
+# The teensy version to use, 30, 31, 35, 36, LC, or 40
+TEENSY = 40
+
 
 # Set to 24000000, 48000000, or 96000000 to set CPU core speed
 TEENSY_CORE_SPEED = 48000000
@@ -38,8 +39,23 @@ else
     endif
 endif
 
-# path location for Teensy 3 core
-COREPATH = teensy3
+
+#set corepath based on teensy version
+ifeq ($(TEENSY), 30)
+	COREPATH = teensy3
+else ifeq ($(TEENSY), 31)
+	COREPATH = teensy3
+else ifeq ($(TEENSY), 35)
+	COREPATH = teensy3
+else ifeq ($(TEENSY), 36)
+	COREPATH = teensy3
+else ifeq ($(TEENSY), LC)
+	COREPATH = teensy3
+else ifeq ($(TEENSY), 40)
+	COREPATH = teensy4
+else
+	$(error Invalid setting for TEENSY)
+endif
 
 # path location for Arduino libraries
 LIBRARYPATH = libraries
@@ -95,6 +111,12 @@ else ifeq ($(TEENSY), 36)
     LDSCRIPT = $(COREPATH)/$(MCU).ld
     LDFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -T$(LDSCRIPT)
     LIBS += -larm_cortexM4lf_math
+else ifeq ($(TEENSY), 40)
+	CPPFLAGS += -D__IMXRT1062__ -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16
+	MCU = imxrt1062
+	LDSCRIPT = $(COREPATH)/$(MCU).ld
+	LDFLAGS += -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-d16 -T$(LDSCRIPT)
+	LIBS += -larm_cortexM7lfsp_math
 else
     $(error Invalid setting for TEENSY)
 endif
@@ -182,11 +204,12 @@ clean:
 	@rm -rf .make
 	@rm -rf tools
 	@rm -rf teensy3
+	@rm -rf teensy4
 
 #==================================#
 #  arduino tools installation      #
 #==================================#
-arduino-tools: tools teensy3
+arduino-tools: tools
 
 tools:
 	cp -r $(ARDUINO_ROOT)/hardware/tools tools
@@ -196,6 +219,11 @@ teensy3:
 	# We'll supply our own main and can safely remove this
 	rm teensy3/main.cpp
 
+
+teensy4:
+	cp -r $(ARDUINO_ROOT)/hardware/teensy/avr/cores/teensy4 teensy4
+	# We'll supply our own main and can safely remove this
+	rm teensy4/main.cpp
 
 #==================================#
 #  teensy_loader_cli installation  #
