@@ -4,8 +4,23 @@ TARGET = $(notdir $(CURDIR))
 # The teensy version to use, 30, 31, 35, 36, LC, or 40
 TEENSY = 40
 
-
 # Set to 24000000, 48000000, or 96000000 to set CPU core speed
+#set the core speed based on teensy version
+ifeq ($(TEENSY), 30)
+	TEENSY_CORE_SPEED = 48000000
+else ifeq ($(TEENSY), 31)
+	TEENSY_CORE_SPEED = 48000000
+else ifeq ($(TEENSY), 35)
+	TEENSY_CORE_SPEED = 120000000
+else ifeq ($(TEENSY), 36)
+	TEENSY_CORE_SPEED = 180000000
+else ifeq ($(TEENSY), LC)
+	TEENSY_CORE_SPEED = 48000000
+else ifeq ($(TEENSY), 40)
+	TEENSY_CORE_SPEED = 600000000
+else
+	$(error Invalid setting for TEENSY)
+
 TEENSY_CORE_SPEED = 48000000
 
 # Some libraries will require this to be defined
@@ -120,6 +135,18 @@ else ifeq ($(TEENSY), 40)
 else
     $(error Invalid setting for TEENSY)
 endif
+
+#print out the compiler settings
+$(info )
+$(info Compiler Settings:)
+$(info )
+$(info CPPFLAGS: $(CPPFLAGS))
+$(info CXXFLAGS: $(CXXFLAGS))
+$(info CFLAGS: $(CFLAGS))
+$(info LDFLAGS: $(LDFLAGS))
+$(info LIBS: $(LIBS))
+$(info )
+
 
 # set arduino define if given
 ifdef ARDUINO
