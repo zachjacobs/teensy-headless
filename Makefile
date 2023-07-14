@@ -20,6 +20,7 @@ else ifeq ($(TEENSY), 40)
 	TEENSY_CORE_SPEED = 600000000
 else
 	$(error Invalid setting for TEENSY)
+endif
 
 TEENSY_CORE_SPEED = 48000000
 
