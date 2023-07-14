@@ -1,6 +1,9 @@
 # The name of your project (used to name the compiled .hex file)
 TARGET = $(notdir $(CURDIR))
 
+#write out the TARGET name to stdout
+$(info TARGET is $(TARGET))
+
 # The teensy version to use, 30, 31, 35, 36, LC, or 40
 TEENSY = 40
 
@@ -22,7 +25,7 @@ else
 	$(error Invalid setting for TEENSY)
 endif
 
-TEENSY_CORE_SPEED = 48000000
+$(info TEENSY_CORE_SPEED is $(TEENSY_CORE_SPEED))
 
 # Some libraries will require this to be defined
 # If you define this, you will break the default main.cpp
@@ -55,6 +58,8 @@ else
     endif
 endif
 
+
+$(info TOOLSPATH is $(TOOLSPATH))
 
 #set corepath based on teensy version
 ifeq ($(TEENSY), 30)
@@ -137,16 +142,6 @@ else
     $(error Invalid setting for TEENSY)
 endif
 
-#print out the compiler settings
-$(info )
-$(info Compiler Settings:)
-$(info )
-$(info CPPFLAGS: $(CPPFLAGS))
-$(info CXXFLAGS: $(CXXFLAGS))
-$(info CFLAGS: $(CFLAGS))
-$(info LDFLAGS: $(LDFLAGS))
-$(info LIBS: $(LIBS))
-$(info )
 
 
 # set arduino define if given
@@ -176,6 +171,21 @@ L_INC := $(foreach lib,$(filter %/, $(wildcard $(LIBRARYPATH)/*/)), -I$(lib))
 
 SOURCES := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o) $(INO_FILES:.ino=.o) $(TC_FILES:.c=.o) $(TCPP_FILES:.cpp=.o) $(LC_FILES:.c=.o) $(LCPP_FILES:.cpp=.o)
 OBJS := $(foreach src,$(SOURCES), $(BUILDDIR)/$(src))
+
+
+
+#print out the compiler settings
+$(info )
+$(info Compiler Settings:)
+$(info )
+$(info CPPFLAGS: $(CPPFLAGS))
+$(info CXXFLAGS: $(CXXFLAGS))
+$(info CFLAGS: $(CFLAGS))
+$(info LDFLAGS: $(LDFLAGS))
+$(info LIBS: $(LIBS))
+$(info L_INC: $(L_INC))
+$(info )
+
 
 all: hex loader
 
